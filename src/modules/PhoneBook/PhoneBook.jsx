@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 import Section from 'shared/components/Section/Section';
 import Filter from 'modules/Filter/Filter';
@@ -7,36 +7,21 @@ import ContactList from 'modules/ContactList/ContactList';
 import { Box, ManeBox } from './PhoneBook.staled';
 import items from 'modules/items';
 
-class PhoneBook extends Component {
-  state = {
-    contacts: [...items],
-    filter: '',
-  };
-
-  componentDidMount() {
+const PhoneBook = () => {
+  const [contacts, setContacts] = useState(() => {
     const contacts = JSON.parse(localStorage.getItem('contacts'));
-    if (contacts?.length)
-      // items && items.length
-      this.setState({ contacts });
-  }
+    return contacts ? contacts : [...items];
+  });
 
-  componentDidUpdate(prevProps, prevState) {
-    const { contacts } = this.state;
-    if (prevState.contacts !== contacts) {
-      localStorage.setItem('contacts', JSON.stringify(contacts));
-    }
-  }
+  const [filter, setFilter] = useState('');
 
-  formSubmit = ({ name, number }) => {
-    const id = nanoid();
+  useEffect(() => {
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }, [contacts]);
 
-    const contact = {
-      id: id,
-      name: name,
-      number: number,
-    };
+  const formSubmit = ({ name, number }) => {
     if (
-      this.state.contacts.find(
+      contacts.find(
         contact => name.toLowerCase() === contact.name.toLowerCase()
       )
     ) {
@@ -44,23 +29,27 @@ class PhoneBook extends Component {
       return;
     }
 
-    this.setState(prevState => ({
-      contacts: [contact, ...prevState.contacts],
-    }));
+    setContacts(prevContacts => {
+      const contact = {
+        id: nanoid(),
+        name,
+        number,
+      };
+      return [contact, ...prevContacts];
+    });
   };
 
-  deleteContact = contactId => {
-    this.setState(prevState => ({
-      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
-    }));
+  const deleteContact = contactId => {
+    setContacts(prevContacts =>
+      prevContacts.filter(contact => contact.id !== contactId)
+    );
   };
 
-  findByName = e => {
-    this.setState({ filter: e.currentTarget.value });
+  const findByName = e => {
+    setFilter(e.currentTarget.value);
   };
 
-  showFilterContacts = () => {
-    const { filter, contacts } = this.state;
+  const showFilterContacts = () => {
     if (!filter) {
       return contacts;
     }
@@ -70,30 +59,28 @@ class PhoneBook extends Component {
     );
   };
 
-  render() {
-    const visibleContacts = this.showFilterContacts();
+  const visibleContacts = showFilterContacts();
 
-    return (
-      <ManeBox>
-        <Section title="Phone Book">
-          <ContactForm onSubmit={this.formSubmit} />
-        </Section>
-        <Section title="Contacts">
-          <Box>
-            <Filter
-              onChange={this.findByName}
-              value={this.state.filter}
-              text="Find contacts by name"
-            />
-            <ContactList
-              contacts={visibleContacts}
-              onDeleteContact={this.deleteContact}
-            />
-          </Box>
-        </Section>
-      </ManeBox>
-    );
-  }
-}
+  return (
+    <ManeBox>
+      <Section title="Phone Book">
+        <ContactForm onSubmit={formSubmit} />
+      </Section>
+      <Section title="Contacts">
+        <Box>
+          <Filter
+            onChange={findByName}
+            value={filter}
+            text="Find contacts by name"
+          />
+          <ContactList
+            contacts={visibleContacts}
+            onDeleteContact={deleteContact}
+          />
+        </Box>
+      </Section>
+    </ManeBox>
+  );
+};
 
 export default PhoneBook;

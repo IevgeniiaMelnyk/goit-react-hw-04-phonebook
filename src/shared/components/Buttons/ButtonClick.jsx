@@ -12,7 +12,7 @@ const ButtonClick = ({ children, type, onClick }) => {
 export default ButtonClick;
 
 ButtonClick.propTypes = {
-  children: PropTypes.elementType.isRequired,
+  children: PropTypes.element.isRequired,
   type: PropTypes.oneOf(['submit', 'button', 'reset']),
   onClick: PropTypes.func,
 };
