@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Input, Label } from './Filter.styled';
 
-const Filter = ({ onChange, value, text }) => {
+const Filter = ({ onBlur, onChange, value, text }) => {
   return (
     <>
       <Label>
@@ -12,6 +12,7 @@ const Filter = ({ onChange, value, text }) => {
           placeholder="Name"
           value={value}
           onChange={onChange}
+          onBlur={onBlur}
         ></Input>
       </Label>
     </>
@@ -21,6 +22,7 @@ const Filter = ({ onChange, value, text }) => {
 export default Filter;
 
 Filter.propTypes = {
+  onBlur: PropTypes.func.isRequired,
   onChange: PropTypes.func.isRequired,
   value: PropTypes.string.isRequired,
   text: PropTypes.string.isRequired,

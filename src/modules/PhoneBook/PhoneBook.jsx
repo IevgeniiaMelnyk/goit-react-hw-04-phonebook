@@ -59,6 +59,8 @@ const PhoneBook = () => {
     );
   };
 
+  const onBlur = () => setFilter('');
+
   const visibleContacts = showFilterContacts();
 
   return (
@@ -69,6 +71,7 @@ const PhoneBook = () => {
       <Section title="Contacts">
         <Box>
           <Filter
+            onBlur={onBlur}
             onChange={findByName}
             value={filter}
             text="Find contacts by name"
