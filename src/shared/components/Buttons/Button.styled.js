@@ -21,6 +21,7 @@ export const BtnSubmit = styled.button`
 `;
 
 export const DeleteBtn = styled.button`
+  cursor: pointer;
   height: 50px;
   width: 50px;
   border-radius: 30px;
